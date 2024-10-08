@@ -34,4 +34,22 @@ class Quiz {
             return true;
         }
     };
-}
+    filterQuestionsByDifficulty(difficulty) {
+        if(difficulty >= 1 && difficulty <= 3)
+        return this.questions = this.questions.filter(function (element) {
+            if (element.difficulty === difficulty) {
+                return true;
+            }else {
+                return false;
+            }
+        });  
+                
+    };
+    averageDifficulty() {
+        const totalDifficulty = this.questions.reduce(function(acc, currentValue) {
+            return acc + currentValue.difficulty;
+        }, 0);
+        return totalDifficulty / this.questions.length;
+    };
+
+}; 
