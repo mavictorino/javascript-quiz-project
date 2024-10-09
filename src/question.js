@@ -8,9 +8,13 @@ class Question {
         }
 
     shuffleChoices() {
+        let previous;
         for (let i = this.choices.length -1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            this.choices[i] = this.choices[j];
+            
+            let random = Math.floor(Math.random() * (i + 1));
+            previous = this.choices[i]
+            this.choices[i] = this.choices[random];
+            this.choices[random] = previous
         };
     }
 }

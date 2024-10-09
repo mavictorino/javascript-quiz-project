@@ -22,8 +22,11 @@ class Quiz {
         
     };
     checkAnswer(answer) {
-        this.answer = answer;
-        return this.correctAnswers ++;
+        if( this.questions[this.currentQuestionIndex].answer === answer){
+            this.correctAnswers++     
+        }
+       
+      
     };
 
     hasEnded() {
