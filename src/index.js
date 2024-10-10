@@ -61,6 +61,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let timer;
 
+  function startTimer () {
+    displayTime();
+    timer = setInterval(function () {
+      quiz.timeRemaining--;
+      displayTime();
+      if (quiz.timeRemaining === 0) {
+        clearInterval(timer);
+        showResults();
+      }
+    }, 1000);
+
+  }
+
+
+  function displayTime() {
+    const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+    const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+    timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+  }
+
+  
+  startTimer();
+  
+
+  
+  
+
 
   /************  EVENT LISTENERS  ************/
 
@@ -105,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     /* progressBar.style.width = ``; // This value is hardcoded as a placeholder*/
     
-    const percentage = (quiz.currentQuestionIndex +1 / questions.length) * 100;
+    const percentage = (quiz.currentQuestionIndex  / questions.length) * 100;
     progressBar.style.width = `${percentage}%`;
     
   
@@ -131,10 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
        ///Atribuindo valores as propriedades}
        radioInput.type = "radio";
-      radioInput.name = "choice"
-      radioInput.value = choice
+       radioInput.name = "choice"
+       radioInput.value = choice
 
-      label.innerText = choice
+       label.innerText = choice
 
       //incluindo os elementos criados pelo JS no HTML 
       choiceContainer.appendChild(radioInput)
@@ -158,8 +185,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   function nextButtonHandler () {
-    let selectedAnswer; // A variable to store the selected answer value
+    let selectedAnswer; // para guardar a resposta selecionada 
+    const choices = document.querySelectorAll('input[name="choice"]');
 
+    choices.forEach(choice => {
+      if (choice.checked) { // checkar qual esta checked
+          selectedAnswer = choice.value; // salva o value da selected choice
+      }
+  });
+
+  if (selectedAnswer) {
+    quiz.checkAnswer(selectedAnswer); // salvar o VALUE do input que esta CHECKED numa variavel, e usar esse valor para chamar a funcao checkAnswer() << vem do quiz
+    quiz.moveToNextQuestion(); // chama a proxima questao
+    showQuestion(); // mostra a proxima questao
+};
 
 
     // YOUR CODE HERE:
@@ -169,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // DENTRO DO CHOICECONTAINER capture todos os elementos input
     // loop pelos elementos input para checkar qual esta checked
     //salvar o VALUE do input que esta CHECKED numa variavel, e usar esse valor para chamar a funcao checkAnswer() << vem do quiz 
-    const choiceElements = document.querySelectorAll();
+    
 
     // 2. Loop through all the choice elements and check which one is selected
       // Hint: Radio input elements have a property `.checked` (e.g., `element.checked`).
@@ -187,17 +226,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   function showResults() {
-
+    
     // YOUR CODE HERE:
     //
     // 1. Hide the quiz view (div#quizView)
-    quizView.style.display = "none";
+    const quizView = document.getElementById('quizView');
+    quizView.style.display = "none"; // esconder a quiz view
 
+    timer = clearInterval(timer);
     // 2. Show the end view (div#endView)
-    endView.style.display = "flex";
+    const endView = document.getElementById('endView');
+    endView.style.display = "flex"; // mostrar a end view
     
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
-    resultContainer.innerText = `You scored 1 out of 1 correct answers!`; // This value is hardcoded as a placeholder
-  }
+    const resultContainer = document.getElementById('result');
+    resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${quiz.questions.length} correct answers!`;
+    
+  };
   
-})
+ 
+  
+  const restartButton = document.getElementById("restartButton");
+  restartButton.addEventListener("click", restartQuiz);
+  
+  function restartQuiz() {
+    
+    quizView.style.display= "block"
+    endView.style.display="none"
+    quiz.currentQuestionIndex = 0;
+    quiz.correctAnswers = 0;
+    quiz.timeRemaining = quizDuration;
+    quiz.shuffleQuestions();
+    startTimer();
+    showQuestion();
+    }; 
+});
+
+
+
+

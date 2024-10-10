@@ -14,10 +14,17 @@ class Quiz {
     moveToNextQuestion() {
         return this.currentQuestionIndex ++;
     };
+
     shuffleQuestions() {
-        for (let i = this.questions.length -1; i > 0; i--) {
+        let previous;
+        console.log(this.questions)
+        for (let i = this.questions.length -1; i >= 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
+            
+            previous = this.questions[i]
             this.questions[i] = this.questions[j];
+            this.questions[j] = previous
+            
         };
         
     };
